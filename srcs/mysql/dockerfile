@@ -1,0 +1,14 @@
+FROM alpine
+
+RUN apk update && apk upgrade
+RUN apk add mysql mysql-client openrc
+COPY ./srcs/* /
+COPY ./srcs/mariadb-server.cnf etc/my.cnf.d/
+VOLUME [ "/var/lib/mysql" ]
+EXPOSE 3306
+
+RUN wget https://dl.influxdata.com/telegraf/releases/telegraf-1.13.3-static_linux_amd64.tar.gz
+RUN tar -xvf telegraf-1.13.3-static_linux_amd64.tar.gz 
+COPY ./telegraf.conf /etc/telegraf/telegraf.conf
+COPY wordpress.sql ./wordpress.sql
+CMD sh start.sh
